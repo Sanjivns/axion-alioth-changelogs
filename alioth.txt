@@ -1,0 +1,126 @@
+Changelogs For AxionAOSP v1.2 BETA Update
+Build Date: 12/04/2025
+
+- Cleanup OMX Dependencies for latest sources
+- sepolicy: Remove duplicate snxxx AIDL rules
+ * These are now part of qcom/sepolicy_vndr.
+
+- These are now part of qcom/sepolicy_vndr.
+ * NfcNci and SecureElement are built by handheld_system.mk
+
+- Implant bypass charging and address appropriate sepolicy rules
+ * thanks @Rve27 for the kernel side work
+
+- Resolving AxionOS Kernel Tuning/Performance Mode Denials and address SELinux denials for VM tuning
+- Address more sepolicy 
+ * Resolve mediacodec denials
+ * Allow mdm_helper to use fowner capability
+ * allow usbd binder call
+ * Address schedtune denials
+ * allow vendor_init to read fingerprint_data_file
+
+- Moving some properties from vendor.prop to system.prop to make selinux happy 
+ * ro.hwui.render_ahead
+ * persist.mm.enable.prefetch
+ * ro.config.avoid_gfx_accel
+ * property=persist.radio.NO_STAPA
+ * property=persist.radio.VT_HYBRID_ENABLE
+ * persist.radio.dynamic_sar
+
+- Move rild.libpath to system prop and set it manually
+ * Nuked from init.qcom.rc
+
+- Remove unexported property triggers from rootdir
+- Resolve GNSS denial
+- Tetheroffload: Version 1.1
+- Build vendor.display.config@1.9
+ * getTransport: Cannot find entry vendor.display.config@1.9::IDisplayConfig/default in either framework or device VINTF manifest.
+
+   [ERROR][FORMAT ] camxdisplayconfig.cpp:124 Initialize() IDisplayConfig service is NULL, version 1.9
+
+- Manually place msm_drm and msm_kgsl_3d0 IRQs
+ * After unbalancing, move these IRQs to separate cores to improve latency.
+
+- Set LTE+ threshold bandwidth to 0
+ * so LTE+ icon will show whenever it's available
+
+- Set 5G threshold bandwidth to 0
+ * So that 5G+ icon will show whenever it's available
+
+- Compact cached app heaps in the background
+ * Background ART heap compaction for cached apps has been
+   recommended for Android Go devices for a while, and Google has enabled it for
+   the Pixel 5 on RQ1A.201205.010. This feature should help fit more cached apps
+   in memory
+
+- Rm package cache on early boot
+ * Because Android won't do it on a dirty flash so certain elements will be broken if something is changed in UI.
+
+- Disable turbulence noise
+- Offload WM shell to another thread
+ * Reduces jitter/jank when pulling down shade
+
+- Disable debug.sf.latch_unsignaled
+ *  debug.sf.latch_unsignaled - This causes SurfaceFlinger to latch   buffers
+ even if their fences haven't signaled
+
+ * Disabling this helps reduces notification QS lag, UI performance is not impacted.
+
+  - Unicote:
+    Also fixes live wallpapers lags
+
+- Increase max fling velocity
+ * Allow scrolling faster, corresponding to our reduced scroll friction.
+
+- Give proper permissions for /dev/diag
+ * This gives proper permission to /dev/diag node so that diag driver can load successfully
+
+   Before in log:
+   Diag_Lib:  Diag_LSM_Init: Failed to open handle to diag driver, error = 13
+
+   After in log:
+   Diag_Lib: qpLogDiagInit <== result : 1
+   Diag_Lib: QMID : gIsQXDMDisabled 0, gIsADBDisabled 1, gIsDebugDisabled
+   0, gIsIMSLogsDisabled 0
+
+-  Silence some spammy logging
+ * HWC and cit sensor logspam is so intense it bumps up logd's idle CPU
+   usage up to over 3%. With this change, logs are much cleaner and logd
+   idle CPU usage is reduced to under 1%, while still allowing error logs
+   to pass through.
+   - Do this only in user/debug builds (except eng).
+
+- Disable Chimera.GmsIntentOperationService and Disable collective Device administrators GMS components
+ * Inspired from universal gms doze magisk module.
+
+- Disable adsprpcd_sensorspd.daemon
+ * 69 spamming error in logs
+  vendor/qcom/proprietary/adsprpc/src/log_config.c:268:Error 0x200: fopen failed for /vendor/lib/rfsa/adsp/adsprpcd.farf
+  vendor/qcom/proprietary/adsprpc/src/log_config.c:268:Error 0x200: fopen failed for /vendor/dsp/adsp/adsprpcd.farf
+  vendor/qcom/proprietary/adsprpc/src/log_config.c:268:Error 0x200: fopen failed for /vendor/dsp/adsprpcd.farf.
+
+- Introduce GameBar v2.0 by @kenway214
+
+- Move gamebar to system settings and add icon as well
+- Move to M3 switch for gamespace2.0
+
+- Comming back to lineage-libperfmgr from pixel-libperfmgr
+ * switching to los power hal cause more flexibility
+
+- Addresss more denials 
+
+
+
+Changelogs For AxionAOSP v1.2 BETA Update
+Build Date: 23/03/2025
+
+- Initial qpr2 build
+- Dolby,leica 5.0 and gamebar 2.0 included 
+- Report bugs with proper logs in support group
+
+CREDITS:
+• @johnmart19 for his work on trees and leica implantation 
+
+• @EmanuelCN0 for the awesome kernel
+
+• Lineage devs for their work on common trees
