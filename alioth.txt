@@ -1,4 +1,4 @@
-Changelogs For AxionAOSP v1.2 BETA Update
+Changelogs For AxionAOSP v1.3 BETA Update
 Build Date: 12/04/2025
 
 - Cleanup OMX Dependencies for latest sources
