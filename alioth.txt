@@ -1,3 +1,136 @@
+Changelogs For AxionAOSP v1.4 Update
+Build Date: 08/05/2025
+
+- Address some Bluetooth and Wifi denials
+
+- Adjust thread count and cpuset after setup wizard
+
+- removed ro.config.avoid_gfx_accel=true as its breaking sidebar 
+
+- Allow untrusted_app to getopt zygote
+ * avc: denied { getopt } for path="/dev/socket/usap_pool_primary" scontext=u:r:untrusted_app:s0:c129,c256,c512,c768 tcontext=u:r:zygote:s0 tclass=unix_stream_socket permissive=1 app=com.android.deskclock
+
+- Allow zygote to access unix_stream_socket
+ * 03-17 17:28:10.546  2409  2409 I FinalizerDaemon: type=1400 audit(0.0:669): avc:  denied  { getopt } for  path="/dev/socket/usap_pool_primary" scontext=u:r:untrusted_app_32:s0:c135,c256,c512,c768 tcontext=u:r:zygote:s0 tclass=unix_stream_socket permissive=1 app=com.android.deskclock
+
+- Nuked lineage dependencies
+
+- Disable QCOM system daemon
+ * For factory use only and has real performance costs.
+
+- Remove unnecessary QTI logkit directories
+ * We do not use logkit
+
+- Update pinner configuration
+ * Pin critical graphics libraries
+
+   Inspired from AOSPA/android_vendor_aospa@c33cdcb
+
+- Enable 64-bit inode version support for ext4
+ * https://jtlayton.wordpress.com/2016/12/16/the-inode-i_version-counter-in-linux/
+
+- Speed profile services and wifi-service to reduce RAM and storage
+
+- Limit AOD & Ambient Display refresh rate to 60Hz 
+
+- Enable display async powermode
+ * All xiaomi sm8250 devices have it enabled in stock.
+
+- Add some libraries to pinner list
+ * Add some librart which will load during camera launch to reduce camera
+   launch time in I/O busy case.
+
+- Frameworks: Update pinner configuration
+ * Drop unused 32-bit libs.
+   Drop RS libs as they're deprecated since 12.
+   Add few adreno (EGL) libs, taken from MIUI.
+   Add libipebpsstriping170 for yupik camx.
+
+- Reduce aod brightness value from 17 to 12
+
+- props: Clean up useless logspams
+
+- Disable logging sensors-hal events
+ * This sets log_level to 0
+   10-14 14:17:17.674 14629 14629 I sensors-hal: get_system_config:67, log_level: 0
+
+   This is done especially to disable spammy logging of ambient light sensor events
+   10-14 14:17:12.821 12603 14590 I sensors-hal: handle_ambient_light_event:157, _ambient_light: ts=3858719100254, lux=11, data_c=0, delta_ms=0, data_cnt=0
+
+- Provide thermal profile permissions
+
+- Disable kpti
+ * As per qualcomm - SM8150/SM8250/SM8350/SM7250/SM7150/SM6150 - KPTI Not required.
+ * It can also help increase performance by a lot in some scenarios.
+ 
+- Move DPM feature property to /system_ext
+ * DPM blobs are under /system_ext.
+
+- Disable DRC
+ * DRC is audio policy to 'compress' volume table, which causes low max volume. Disable it for now
+
+- disable proximity usage during doze
+
+- Address more denials
+
+- Don't pin some adreno libs
+ * they can't be anyways pinned until system_server selinux access
+ * avc:  denied  { read } for  name="libgpudataproducer.so" dev="dm-4" ino=1081 scontext=u:r:system_server:s0
+ * avc:  denied  { read } for  name="libgpudataproducer.so" dev="dm-4" ino=1799 scontext=u:r:system_server:s0
+ * avc:  denied  { read } for  name="libipebpsstriping.so" dev="dm-4" ino=1819 scontext=u:r:system_server:s0
+
+- Label nr_requests
+ * W init    : type=1400 audit(0.0:46): avc:  denied  { write } for  name="nr_requests" dev="sysfs" ino=70247 scontext=u:r:init:s0
+
+- Address no fingerprint denials
+ * W init    : type=1400 audit(0.0:55): avc:  denied  { mounton } for  path="/vendor/etc/permissions/android.hardware.wifi.aware.xml" dev="dm-4" ino=632 scontext=u:r:init:s0 tcontext=u:object_r:vendor_configs_file:s0 tclass=file permissive=0
+
+     -----  following are wifi related changes ----
+ 
+- Increase max bss count
+ * QCOM's driver can support a max of 512 scan results. Ensure that
+   wpa_supplicant is in sync with that number.
+
+- Disable RX wakelock feature
+- Relax WiFi re-association RSSI thresholds
+- No BSS flush for 2018 devices
+- Disable TDLS offchannel
+ * TDLS off-channel feature is needed only for
+   certification. Disable the feature in production
+   builds.
+
+- Remove entry for gEnableNUDTracking
+ * Currently Min, Max and default values of gEnableNUDTracking in
+     code are:
+     Min: 0 (Driver will not track the NUD failures, and ignore the same)
+     Max: 2 (Driver will track the NUD failures and if honoured will roam
+	away from the connected BSSID to a new BSSID to retain the
+	data connectivity).
+     Default: 2
+ 
+     In order to enable NUD tracking after NUD failure by default,
+     remove entry for gEnableNUDTracking from ini file.
+
+- Remove TxPower2g and 5g
+ * Ini config values TxPower2g and TxPower5g are not
+   getting used anymore.
+   Remove TxPower2g and TxPower5g from WCNSS_qcom_cfg.ini
+   for all the targets.
+
+- set inactivity time
+ * Wait for 1 second to let wifi driver do
+   complete clean reset of SW/HW.
+
+- Bind mount Wifi Aware feature permissions.
+ * Fixes issues when GPS and Wifi are switched on simultaneously.
+   * Also kills logspam regarding NAN.
+
+- Extend gInterfaceChangeWait to 2 seconds for avoid crash when "adb reboot"
+
+
+
+
+
 Changelogs For AxionAOSP v1.3 BETA Update
 Build Date: 12/04/2025
 
